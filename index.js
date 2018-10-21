@@ -67,7 +67,7 @@ class Kafka {
     } ) ) ;
 
     const consumer = new kafkaNode.Consumer(
-        client,
+        this.client,
         topicConfig,
         {
             autoCommit: false,
