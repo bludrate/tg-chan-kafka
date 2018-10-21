@@ -1,0 +1,22 @@
+{
+  "name": "tg-chan-kafka",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bludrate/tg-chan-kafka.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/bludrate/tg-chan-kafka/issues"
+  },
+  "homepage": "https://github.com/bludrate/tg-chan-kafka#readme",
+  "dependencies": {
+    "kafka-node": "^3.0.1"
+  }
+}
