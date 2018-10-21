@@ -1,6 +1,6 @@
 const kafkaNode = require('kafka-node');
 const fs = require('fs');
-const offsetFileName = '__kafka-offsets.json';
+const offsetFileName = __dirname + '/__kafka-offsets.json';
 
 function saveFile( data ) {
   return new Promise( ( resolve, reject ) => {
@@ -75,7 +75,7 @@ class Kafka {
         }
     );
 
-    consumer.on('message', function ( message ) {
+    consumer.on('message', ( message ) => {
       callback( message );
 
       this.offsets[ message.topic ] = message.offset + 1;
