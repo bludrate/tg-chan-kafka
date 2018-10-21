@@ -44,7 +44,7 @@ class Kafka {
 
   get producer(){
     if ( !this.kafkaProducer ) {
-      this.kafkaProducer = new kafka.Producer( this.client );
+      this.kafkaProducer = new kafkaNode.Producer( this.client );
       this.producerPromise = new Promise( ( resolve, reject ) => {
         producer.on('ready', () => {
           resolve( this.kafkaProducer );
