@@ -34,6 +34,11 @@ class Kafka {
       this.offsets = offsets;
 
       return this;
+    } )
+    .catch( ( error ) => {
+      this.offsets = {};
+
+      return this;
     } );
   }
 
