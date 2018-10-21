@@ -43,10 +43,12 @@ class Kafka {
   }
 
   get producer(){
-    if ( !this.producer ) {
-      this.producer = new kafka.Producer( this.client );
+    if ( !this.kafkaProducer ) {
+      this.kafkaProducer = new kafka.Producer( this.client );
       this.producerPromise = new Promise( ( resolve, reject ) => {
-        producer.on('ready', resolve);
+        producer.on('ready', () => {
+          resolve( this.kafkaProducer );
+        } );
         producer.on('error', function (err) {
           console.log( err );
         });
