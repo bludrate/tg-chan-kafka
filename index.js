@@ -66,7 +66,7 @@ class Kafka {
       offset: this.offsets[ t ]
     } ) ) ;
 
-    const consumer = new kafka.Consumer(
+    const consumer = new kafkaNode.Consumer(
         client,
         topicConfig,
         {
