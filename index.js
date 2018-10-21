@@ -46,10 +46,10 @@ class Kafka {
     if ( !this.kafkaProducer ) {
       this.kafkaProducer = new kafkaNode.Producer( this.client );
       this.producerPromise = new Promise( ( resolve, reject ) => {
-        producer.on('ready', () => {
+        this.kafkaProducer.on('ready', () => {
           resolve( this.kafkaProducer );
         } );
-        producer.on('error', function (err) {
+        this.kafkaProducer.on('error', function (err) {
           console.log( err );
         });
       } );
