@@ -1,6 +1,6 @@
 const kafkaNode = require('kafka-node');
 const fs = require('fs');
-const offsetFileName = __dirname + '/__kafka-offsets.json';
+const offsetFileName = process.cwd() + '/__kafka-offsets.json';
 
 function saveFile( data ) {
   return new Promise( ( resolve, reject ) => {
@@ -14,13 +14,15 @@ function saveFile( data ) {
   } );
 }
 
-function readFile() {
+function getOffsets() {
   return new Promise( ( resolve, reject ) => {
     fs.readFile( offsetFileName, ( error, content ) => {
       if ( error ) {
         reject( error );
       } else {
-        resolve( JSON.parse( content ) );
+        const contentString = content.toString();
+
+        resolve( contentString ? JSON.parse( contentString ) : {} );
       }
     } );
   } );
@@ -30,25 +32,31 @@ class Kafka {
   constructor(){
     this.client = new kafkaNode.Client();
 
-    return readFile().then( offsets => {
-      this.offsets = offsets;
+    return getOffsets()
+      .then( offsets => {
+        this.offsets = offsets;
 
-      return this;
-    } )
-    .catch( ( error ) => {
-      this.offsets = {};
+        return this;
+      } )
+      .catch( ( error ) => {
+        this.offsets = {};
 
-      return this;
-    } );
+        return this;
+      } );
   }
 
   get producer(){
     if ( !this.kafkaProducer ) {
       this.kafkaProducer = new kafkaNode.Producer( this.client );
       this.producerPromise = new Promise( ( resolve, reject ) => {
-        this.kafkaProducer.on('ready', () => {
+        if ( this.kafkaProducer.ready ) {
           resolve( this.kafkaProducer );
-        } );
+        } else {
+          this.kafkaProducer.on('ready', () => {
+            resolve( this.kafkaProducer );
+          } );
+        }
+
         this.kafkaProducer.on('error', function (err) {
           console.log( err );
         });
@@ -58,13 +66,36 @@ class Kafka {
     return this.producerPromise;
   }
 
+  getOffsets( topics ) {
+    return new Promise( (resolve, reject ) => {
+      const offset = new kafkaNode.Offset( this.client );
+
+      offset.fetchLatestOffsets(topics, (error, offsets) => {
+        if (error)
+          return reject( error );
+
+        for ( let topic in offsets ) {
+          this.offsets[ topic ] = offsets[ topic ][0];
+        }
+
+        resolve( this.offsets );
+      } );
+    });
+  }
+
   /**
   */
-  subscribe( topics, callback ){
-    const topicConfig = topics.map( t => ( {
+  async subscribe( topics, callback ){
+    if ( topics.some( t => {
+      return this.offsets[ t ] === undefined;
+    } ) ) {
+      await this.getOffsets( topics );
+    }
+
+    const topicConfig = topics.map( t => ({
       topic: t,
-      offset: this.offsets[ t ]
-    } ) ) ;
+      offset: this.offsets[ t ] || 0
+    }));
 
     const consumer = new kafkaNode.Consumer(
         this.client,
