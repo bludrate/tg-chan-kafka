@@ -118,6 +118,7 @@ class Kafka {
       if ( err.topics ) {
         console.log('create topics', err.topics);
         this.client.createTopics(err.topics, (error, result) => {
+          console.log(error,result);
           if ( error ) {
             return console.log(error);
           }
