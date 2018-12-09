@@ -114,7 +114,11 @@ class Kafka {
       saveFile( this.offsets );
     }).on('error', (err) => {
       if ( err.topics ) {
+        console.log('create topics', err.topics);
         this.client.createTopics(err.topics, (error, result) => {
+          if ( error ) {
+            return console.log(error);
+          }
           this.subscribe(topics, callback);
         });
       } else {
