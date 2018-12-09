@@ -112,8 +112,14 @@ class Kafka {
       this.offsets[ message.topic ] = message.offset + 1;
 
       saveFile( this.offsets );
-    }).on('error', function (err) {
-      console.log(err.topics);
+    }).on('error', (err) => {
+      if ( err.topics ) {
+        this.client.createTopics(err.topics, (error, result) => {
+          this.subscribe(topics, callback);
+        });
+      } else {
+        console.log(err);
+      }
     })
   }
 }
