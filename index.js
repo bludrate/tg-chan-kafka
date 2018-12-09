@@ -107,6 +107,7 @@ class Kafka {
     );
 
     consumer.on('message', ( message ) => {
+      console.log(message);
       callback( message );
 
       this.offsets[ message.topic ] = message.offset + 1;
