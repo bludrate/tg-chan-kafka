@@ -32,6 +32,8 @@ class Kafka {
   constructor(){
     this.client = new kafkaNode.Client();
 
+    this.client.refreshMetadata();
+
     return getOffsets()
       .then( offsets => {
         this.offsets = offsets;
@@ -107,7 +109,6 @@ class Kafka {
     );
 
     consumer.on('message', ( message ) => {
-      console.log(message);
       callback( message );
 
       this.offsets[ message.topic ] = message.offset + 1;
