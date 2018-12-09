@@ -113,7 +113,7 @@ class Kafka {
 
       saveFile( this.offsets );
     }).on('error', function (err) {
-      console.log(err);
+      console.log(err.topics);
     })
   }
 }
