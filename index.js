@@ -32,7 +32,7 @@ class Kafka {
   constructor(){
     this.client = new kafkaNode.Client();
 
-    this.client.refreshMetadata();
+    //this.client.refreshMetadata();
 
     return getOffsets()
       .then( offsets => {
